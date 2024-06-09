@@ -1,8 +1,7 @@
 OBSPokemonHUD + Pokemon Insurgence
+------------
 
 ![Screenshot of the OBS scripts window showing OBS Pokemon HUD's properties](readme_files/screenshot_obspokemonhud.png?raw=true)
-
-------------
 
 This is a fork of the original OBSPokemonHUD to allow support for Pokemon Insurgence, in two important ways:
 
