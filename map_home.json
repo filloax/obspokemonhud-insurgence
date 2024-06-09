@@ -564,7 +564,8 @@
             "standard": "quilava.png"
         },
         "157": {
-            "standard": "typhlosion.png"
+            "standard": "typhlosion.png",
+            "hisui": "typhlosion-hisuian.png"
         },
         "158": {
             "standard": "totodile.png"
@@ -3070,6 +3071,12 @@
             "ice": "calyrex-ice-rider.png",
             "shadow": "calyrex-shadow-rider.png",
             "standard": "calyrex.png"
+        },
+        "904": {
+            "standard": "overqwil.png"
+        },
+        "959": {
+            "standard": "tinkaton.png"
         }
     }
 }
