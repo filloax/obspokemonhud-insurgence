@@ -77,6 +77,7 @@ def script_properties():
     obs.obs_property_list_add_string(sprite_style, "", "")
     obs.obs_property_list_add_string(sprite_style, "home", "home")
     obs.obs_property_list_add_string(sprite_style, "showdown", "showdown")
+    obs.obs_property_list_add_string(sprite_style, "insurgence_local", "insurgence_local")
 
     # Team image locations.
     # Set up the settings and add in a blank value as the first value
@@ -326,7 +327,7 @@ def update_sprite_sources(source_name, team_slot):
             sprite_map['sprites'],
             team_slot['shiny'],
             team_slot["dexnumber"],
-            None
+            team_slot.get("variant", None),
         )
         location = cache_image(
             sprite,
@@ -352,7 +353,7 @@ def get_sprite_location(urls, sprites, shiny, dex_number, variant):
     if debug:
         print("Function: Get Sprite sources")
 
-    link = ""
+    link: str = ""
     if shiny:
         link = urls['shiny']
     else:
@@ -361,13 +362,21 @@ def get_sprite_location(urls, sprites, shiny, dex_number, variant):
     if str(dex_number) not in sprites.keys():
         print("I don't belong")
         return
+        
+    if "%s" not in link:
+        link = link + "%s"
 
     if variant in sprites[str(dex_number)].keys():
-        return link + sprites[str(dex_number)][variant]
-
-    # If the given forms, genders, etc aren't available, just give the standard
-    # sprite
-    return link + sprites[str(dex_number)]['standard']
+        a = link.replace("%s", sprites[str(dex_number)][variant])
+    else:
+        # If the given forms, genders, etc aren't available, just give the standard
+        # sprite
+        a = link.replace("%s", sprites[str(dex_number)]['standard'])
+        
+    if ".png" not in a:
+        a = a + ".png"
+        
+    return a
 
 
 def cache_image(link, shiny, location, image_type):
@@ -381,6 +390,9 @@ def cache_image(link, shiny, location, image_type):
     # If it's a shiny, tack that on to the end
     if shiny:
         cache_folder += "shiny/"
+
+    if os.path.exists(link): #local file
+        return link
 
     # Get the file name from the image link
     filename = link.split("/")[-1]
