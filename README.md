@@ -1,7 +1,56 @@
-OBSPokemonHUD
-------------
+OBSPokemonHUD + Pokemon Insurgence
 
 ![Screenshot of the OBS scripts window showing OBS Pokemon HUD's properties](readme_files/screenshot_obspokemonhud.png?raw=true)
+
+------------
+
+This is a fork of the original OBSPokemonHUD to allow support for Pokemon Insurgence, in two important ways:
+
+- Automatically updating the team from the Pokemon Insurgence savefile
+- Taking the sprite files directly from the Pokemon Insurgence folder
+
+This might work with other Pokemon Essentials games too, but will need changing a few lines of the json file and hasn't been tested (see below).
+
+## Install Instructions
+
+Follow the rules [below](#install-instructions-1) for the original OBSPokemonHud. After installing the required [Libraries](#libraries), you
+need to install the additional required library **rubymarshal**. You can do so by opening a terminal or command prompt and running:
+
+```
+pip install rubymarshal
+```
+
+If you want to use the auto-team-updater, you also must add the `read-essentials-save.py` file in the same window where you added `obspokemonhud.py`, by pressing the `+` button in the `Tools` -> `Scripts` window.
+
+## Configuration
+
+In the base *obspokemonhud* settings in OBS you should select the **insurgence_local** Sprite Style (it's an added option next to *home* and *showdown*). 
+
+Additionally, open the `map_insurgence_local.json` file in any text editor and make sure the file path at the top points to your Pokemon Insurgence installation folder.
+By default it is `C:/Program Files (x86)/Insurgence/Pokemon Insurgence 1.2.7 Core/Graphics/Battlers/`, so if you installed it somewhere else (or you have a different version) you must change it to the proper path. **For example**, if you installed it in `D:/Games/Insurgence/Pokemon Insurgence 1.2.6 Core`, you must change the `"urls"` part like this:
+
+```json
+"urls": {
+    "normal": "D:/Games/Insurgence/Pokemon Insurgence 1.2.6 Core/Graphics/Battlers/",
+    "shiny": "D:/Games/Insurgence/Pokemon Insurgence 1.2.6 Core/Graphics/Battlers/%ss"
+}
+```
+
+## Other Pokemon Essentials Games
+
+This might work with other Pokemon Essentials games if they use the same save file format (I noticed for example Pokemon Xenoverse also having a Game.rxdata file). I haven't tested if that works; you'd still need to alter the `map_insurgence_local.json` to point to that game's folder, making sure it points to the folder containing the pokemon PNGs.
+
+## Issues
+
+Currently doesn't check if a Pokemon is a shiny as I couldn't find any "is shiny" field in the party data. Feel free to take a look at the converted party data example in `extracted_party_sample.json` and if you find it, tell me.
+
+## Links
+
+If you're italian, I'm going to start streaming Insurgence soonish on the Twitch channel [filloaxtv](https://www.twitch.tv/filloaxtv) in a few weeks from writing (09-06-2024). If you want to, come and say hi!
+
+
+Original OBSPokemonHud description
+------------
 
 OBSPokemonHUD is a way to have your current Pokemon team showing up in OBS and allow them to be updated by a JSON file. The JSON file can be manually edited or you use accompanying scripts to write them for you.
 
