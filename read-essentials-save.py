@@ -8,6 +8,7 @@ try:
     import obspython as obs
 except:
     print("Not running in OBS")
+import itertools
 
 def script_description():
     """Sets up the description
@@ -115,11 +116,14 @@ def main(save_path, team_path):
 
     team = {
         f'slot{i+1}': {
-            'dexnumber': mon['species'],
+            'dexnumber': mon['species'] if mon else 0,
             'shiny': False,
             'variant': None,
         }
-        for i, mon in enumerate(party_data)        
+        for i, mon in enumerate(itertools.chain(
+            party_data,
+            [None for i in range(6 - len(party_data))]
+        ))
     }
     with open(team_path, 'w', encoding='UTF-8') as f:
         json.dump(team, f, indent=4)
