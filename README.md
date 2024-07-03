@@ -35,13 +35,17 @@ By default it is `C:/Program Files (x86)/Insurgence/Pokemon Insurgence 1.2.7 Cor
 }
 ```
 
+### JSON Savefiles
+
+By default, this script takes the default `Game.rxdata` savefile for the Pokemon fangame in question. The script can also take a `json` file representing the savefile: this option is meant to be used with a fangame that outputs a JSON savefile next to its raw one, usually requiring the game to be modified to do so (which is what I did for Insurgence). Currently that mod for Insurgence is WIP, I'll try to post it later when I figure out a good way to package it.
+
 ## Other Pokemon Essentials Games
 
 This might work with other Pokemon Essentials games if they use the same save file format (I noticed for example Pokemon Xenoverse also having a Game.rxdata file). I haven't tested if that works; you'd still need to alter the `map_insurgence_local.json` to point to that game's folder, making sure it points to the folder containing the pokemon PNGs.
 
 ## Issues
 
-Currently doesn't check if a Pokemon is a shiny as I couldn't find any "is shiny" field in the party data. Feel free to take a look at the converted party data example in `extracted_party_sample.json` and if you find it, tell me.
+The default option for reading savefiles (raw `.rxdata` saves) doesn't support checking if a Pokemon in the party is shiny as the converter for the savefile I used seems to not read the isShiny field that should be present in the savefile. The `json` option (see [Json Savefiles](#json-savefiles)) allows this, but requires modding Insurgence.
 
 ## Links
 
