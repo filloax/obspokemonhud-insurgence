@@ -25,7 +25,7 @@ def script_properties():
     obs.obs_properties_add_bool(properties, "run_boolean", "Run?")
     obs.obs_properties_add_int(properties, "check_interval_int", "Update Interval (seconds)", 1, 120, 1)
     obs.obs_properties_add_path(properties, "json_file", "Team JSON File", obs.OBS_PATH_FILE, "*.json", None)
-    obs.obs_properties_add_path(properties, "save_file", "Pokemon Insurgence save file (Game.rxdata)", obs.OBS_PATH_FILE, "Game.rxdata", None)
+    obs.obs_properties_add_path(properties, "save_file", "Pokemon Insurgence save file (Game.rxdata)", obs.OBS_PATH_FILE, "Raw savefile(Game.rxdata);;JSON savefile(Game.json)", None)
     
     return properties
 
@@ -93,28 +93,45 @@ def run():
         main(save_file, json_file)
 
 
-def extract_pokemon_party(data):
+def __extract_pokemon_party(data):
     # Extract the player's party from the game data
     # This will depend on the structure of your game data
     # Adjust the keys as per the actual data structure
     return data.attributes["@party"]
 
-def recursive_to_py(data):
+def __recursive_rb_to_py(data):
     if type(data) is RubyString:
         return data.text
     elif isinstance(data, RubyObject):
-        return {re.sub(r'^@', '', k): recursive_to_py(v) for k, v in data.attributes.items()}
+        return {re.sub(r'^@', '', k): __recursive_rb_to_py(v) for k, v in data.attributes.items()}
     elif type(data) is list:
-        return [recursive_to_py(v) for v in data]
+        return [__recursive_rb_to_py(v) for v in data]
     else:
         return data
+    
+def __parse_save_json(save_path: str):
+    with open(save_path, 'r', encoding='utf-8') as save:
+        data = json.load(save)
+    trainer = data["trainer"]
+        
+    return {
+        f'slot{i+1}': {
+            'dexnumber': mon['species'] if mon else 0,
+            'shiny': mon['isShiny'] if mon else False,
+            'variant': None,
+        }
+        for i, mon in enumerate(itertools.chain(
+            trainer["party"],
+            [None for i in range(6 - len(trainer["party"]))]
+        ))
+    }
 
-def main(save_path, team_path):
+def __parse_save_ruby(save_path: str):
     with open(save_path, 'rb') as save:
-        party = extract_pokemon_party(load(save))
-    party_data = recursive_to_py(party)
-
-    team = {
+        party = __extract_pokemon_party(load(save))
+    party_data = __recursive_rb_to_py(party)
+    
+    return {
         f'slot{i+1}': {
             'dexnumber': mon['species'] if mon else 0,
             'shiny': False,
@@ -125,6 +142,15 @@ def main(save_path, team_path):
             [None for i in range(6 - len(party_data))]
         ))
     }
+
+def main(save_path: str, team_path: str):
+    if save_path.endswith(".json"):     
+        team = __parse_save_json(save_path)
+    elif save_path.endswith(".rxdata"):
+        team = __parse_save_ruby(save_path)
+    else:
+        raise Exception("Unrecognized file format for " + save_path)
+
     with open(team_path, 'w', encoding='UTF-8') as f:
         json.dump(team, f, indent=4)
         
